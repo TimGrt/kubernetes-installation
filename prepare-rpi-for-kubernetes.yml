@@ -1,0 +1,9 @@
+---
+
+# Root Partition erweitern
+# /usr/bin/rootfs-expand
+
+# memory cgroup aktivieren
+# cgroup_enable=memory in /boot/cmdline.txt
+
+# yum update

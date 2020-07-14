@@ -1,0 +1,25 @@
+---
+
+- name: Install Kubernetes Repository
+  template:
+    src: kubernetes.repo.j2
+    dest: /etc/yum.repos.d/kubernetes.repo
+
+- name: Set SELinux in permissive mode
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: Install kubeadm, kubelet and kubectl
+  yum:
+    name:
+      - kubelet
+      - kubeadm
+      - kubectl
+    disable_excludes: all
+    state: present
+
+- name: Start kubelet and enable at boot
+  systemd:
+    name: kubelet
+    enabled: yes

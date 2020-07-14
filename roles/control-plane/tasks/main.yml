@@ -1,0 +1,11 @@
+---
+
+- name: Run kubeadm to initialize Kubernetes cluster
+  command: 
+    cmd: "kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address={{ hostvars[inventory_hostname].ansible_host }}"
+    creates: /var/lib/kubelet/config.yaml
+
+- name: Set Kubeconfig environment variable globally
+  copy:
+    src: kubeconfig.sh
+    dest: /etc/profile.d/kubeconfig.sh

@@ -1,0 +1,19 @@
+---
+
+- name: Install Kubernetes with kubeadm on CentOS 7
+  hosts: rpi
+  roles:
+    - bootstrap
+  become: yes
+
+- name: Initialize Control-Plane Node
+  hosts: kubemaster
+  roles:
+    - control-plane
+  become: yes
+
+- name: Join Worker Nodes to Kubernetes Master Node
+  hosts: kubeworker
+  roles:
+    - worker-nodes
+  become: yes
