@@ -47,6 +47,12 @@
   loop:
     - "30000-32767/tcp"
 
+- name: Set SELinux in permissive mode
+  selinux:
+    policy: targeted
+    state: permissive
+
+# Packages needed for subsequent operations, e.g. get certificate hash for worker join
 - name: Install additional packages
   yum:
     name:

@@ -1,9 +1,25 @@
 ---
 
-# Root Partition erweitern
-# /usr/bin/rootfs-expand
+- name: Prepare Raspberry Pi Cluster nodes with CentOS 7 for Kubernetes installation
+  hosts: rpi
+  connection: local
+  #become: yes
+  tasks:
+    - fail:
+    - name: Expand root partition
+      command: /usr/bin/rootfs-expand
 
-# memory cgroup aktivieren
-# cgroup_enable=memory in /boot/cmdline.txt
+    - name: Activate Memory cgroup
+      lineinfile:
+        path: /tmp/cmdline.txt
+        regexp: '(^\S.*(?<!cgroup_enable=memory)$)'
+        line: '\1 cgroup_enable=memory'
+        backrefs: yes
 
-# yum update
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
+        
+    - name: Reboot Hosts
+      reboot:

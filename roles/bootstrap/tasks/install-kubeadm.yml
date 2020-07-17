@@ -5,11 +5,6 @@
     src: kubernetes.repo.j2
     dest: /etc/yum.repos.d/kubernetes.repo
 
-- name: Set SELinux in permissive mode
-  selinux:
-    policy: targeted
-    state: permissive
-
 - name: Install kubeadm, kubelet and kubectl
   yum:
     name:

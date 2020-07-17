@@ -5,7 +5,59 @@
     cmd: "kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address={{ hostvars[inventory_hostname].ansible_host }}"
     creates: /var/lib/kubelet/config.yaml
 
+# Necessary to use kubectl command
 - name: Set Kubeconfig environment variable globally
   copy:
     src: kubeconfig.sh
     dest: /etc/profile.d/kubeconfig.sh
+
+- name: Symlink the kubectl admin.conf to ~/.kube/conf
+  file:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    state: link
+
+- name: Get Kubernetes version for Weave installation
+  shell: kubectl version | base64 | tr -d '\n'
+  changed_when: false
+  register: kubectl_version
+
+- name: Configure Weave networking.
+  command:
+  cmd: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }}"
+  register: weave_result
+  changed_when: "'created' in weave_result.stdout"
+
+- name: Apply pod network plugin
+  command:
+    cmd: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }} --kubeconfig /etc/kubernetes/admin.conf"
+
+- name: Install Python package manager
+  yum:
+    name:
+      - epel-release
+      - python-pip
+      - python-openshift
+    state: present
+
+- name: Upgrade pip
+  pip:
+    name: pip
+    state: latest
+
+- name: Install needed python packages for k8s module
+  pip:
+    name:
+      - pyyaml
+    state: present
+
+- name: Get Dashboard config
+  get_url:
+    url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+    dest: /root/dashboard-config.yaml
+
+- name: Apply Dashboard config to Kubernetes cluster
+  k8s:
+    src: /root/dashboard-config.yaml
+    kubeconfig: /etc/kubernetes/admin.conf
+    state: present
