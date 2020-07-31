@@ -1,17 +1,33 @@
 ---
 
+- name: Prepare localhost
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Install sshpass, this is required for Ansible ssh connection via password
+      yum:
+        name: sshpass
+        state: present
+
 - name: Prepare Raspberry Pi Cluster nodes with CentOS 7 for Kubernetes installation
   hosts: rpi
-  connection: local
-  #become: yes
+  vars:
+    ansible_user: root
+    ansible_password: centos
   tasks:
-    - fail:
+    - name: Assert if root partition needs to get expanded
+      command: "growpart {{ ansible_cmdline.root | regex_replace('^(\/dev\/)(?P<device>.*)(p)(?P<devicenumber>.)$', '/dev/\\g<device> \\g<devicenumber>') }} -N"
+      failed_when: false
+      changed_when: false
+      register: partition_needs_resizing
+    
     - name: Expand root partition
       command: /usr/bin/rootfs-expand
-
+      when: "'NOCHANGE' not in partition_needs_resizing.stdout"
+    
     - name: Activate Memory cgroup
       lineinfile:
-        path: /tmp/cmdline.txt
+        path: /boot/cmdline.txt
         regexp: '(^\S.*(?<!cgroup_enable=memory)$)'
         line: '\1 cgroup_enable=memory'
         backrefs: yes
@@ -20,6 +36,13 @@
       yum:
         name: '*'
         state: latest
-        
+
+    - name: Assert if host needs rebooting
+      command: needs-restarting -r
+      failed_when: false
+      changed_when: false
+      register: reboot_required
+    
     - name: Reboot Hosts
       reboot:
+      when: "'Reboot is required' in reboot_required.stdout"
