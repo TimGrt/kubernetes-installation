@@ -1,0 +1,30 @@
+---
+
+- name: Ensure Memory cgroup is enabled
+  stat:
+    path: /sys/fs/cgroup/memory
+    
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Remove swap from fstab
+  lineinfile:
+    path: '/etc/fstab'
+    regexp: ' swap '
+    state: 'absent'
+
+- name: Ensure bridged traffic can be seen by iptables
+  copy:
+    src: k8s.conf
+    dest: /etc/sysctl.d/k8s.conf
+
+- name: Load br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Set SELinux in permissive mode
+  selinux:
+    policy: targeted
+    state: permissive

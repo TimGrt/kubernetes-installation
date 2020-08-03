@@ -1,0 +1,7 @@
+---
+
+- name: Install k3s
+  hosts: kubemaster
+  become: yes
+  roles:
+    - k3s-bootstrap    
