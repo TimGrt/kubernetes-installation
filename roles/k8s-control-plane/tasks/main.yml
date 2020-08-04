@@ -17,6 +17,25 @@
     dest: ~/.kube/config
     state: link
 
+- name: Install Python package manager
+  yum:
+    name:
+      - epel-release
+      - python-pip
+      - python-openshift
+    state: present
+
+- name: Upgrade pip
+  pip:
+    name: pip
+    state: latest
+
+- name: Install needed python packages for k8s module
+  pip:
+    name:
+      - pyyaml
+    state: present
+
 - name: Get Kubernetes version for Weave installation
   shell: kubectl version | base64 | tr -d '\n'
   changed_when: false
@@ -41,25 +60,6 @@
   command:
     cmd: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }} --kubeconfig /etc/kubernetes/admin.conf"
   when: weave_daemonset.resources | length == 0
-
-- name: Install Python package manager
-  yum:
-    name:
-      - epel-release
-      - python-pip
-      - python-openshift
-    state: present
-
-- name: Upgrade pip
-  pip:
-    name: pip
-    state: latest
-
-- name: Install needed python packages for k8s module
-  pip:
-    name:
-      - pyyaml
-    state: present
 
 - name: Get Dashboard config
   get_url:
