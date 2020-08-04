@@ -14,5 +14,6 @@
   delegate_to: "{{ groups['kubemaster'][0] }}"
 
 - name: Run kubeadm join to add worker node to Kubernetes cluster 
-  command: "kubeadm join --token {{ join_token.stdout }} {{ hostvars[groups['kubemaster'][0]].ansible_host }}:6443 --discovery-token-ca-cert-hash sha256:{{ discovery_token.stdout }}"
-  creates: /var/lib/kubelet/config.yaml
+  command:  
+    cmd: "kubeadm join --token {{ join_token.stdout }} {{ hostvars[groups['kubemaster'][0]].ansible_host }}:6443 --discovery-token-ca-cert-hash sha256:{{ discovery_token.stdout }}"
+    creates: /var/lib/kubelet/config.yaml

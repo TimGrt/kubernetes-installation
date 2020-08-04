@@ -8,9 +8,9 @@
       yum:
         name: sshpass
         state: present
-     - name: Ensure public key for current User exists
-       stat:
-         path: ~/.ssh/id_rsa.pub
+    - name: Ensure public key for current User exists
+      stat:
+        path: ~/.ssh/id_rsa.pub
 
 - name: Prepare Raspberry Pi Cluster nodes with CentOS 7 for Kubernetes installation
   hosts: rpi

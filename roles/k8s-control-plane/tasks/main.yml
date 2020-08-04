@@ -22,15 +22,25 @@
   changed_when: false
   register: kubectl_version
 
+- name: Check if Weave is already installed
+  k8s_info:
+    api_version: v1
+    kind: DaemonSet
+    name: weave-net
+    namespace: kube-system
+  register: weave_daemonset
+
 - name: Configure Weave networking.
   command:
-  cmd: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }}"
+    cmd: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }}"
   register: weave_result
   changed_when: "'created' in weave_result.stdout"
+  when: weave_daemonset.resources | length == 0
 
 - name: Apply pod network plugin
   command:
     cmd: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }} --kubeconfig /etc/kubernetes/admin.conf"
+  when: weave_daemonset.resources | length == 0
 
 - name: Install Python package manager
   yum:
