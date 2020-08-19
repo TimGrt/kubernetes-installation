@@ -1,7 +1,19 @@
 ---
 
-- name: Install k3s
+- name: Bootstrap cluster hosts for k3s installation
+  hosts: rpi 
+  become: yes
+  roles:
+    - k3s-bootstrap
+
+- name: Install k3s server
   hosts: kubemaster
   become: yes
   roles:
-    - k3s-bootstrap    
+    - k3s-server
+
+- name: Install k3s agents
+  hosts: kubeworker
+  become: yes
+  roles:
+    - k3s-agent

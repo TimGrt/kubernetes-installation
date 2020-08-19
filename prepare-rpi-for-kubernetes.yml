@@ -17,6 +17,7 @@
   vars:
     ansible_user: root
     ansible_password: centos
+    ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
   tasks:
     - name: Assert if root partition needs to get expanded
       command: "growpart {{ ansible_cmdline.root | regex_replace('^(\/dev\/)(?P<device>.*)(p)(?P<devicenumber>.)$', '/dev/\\g<device> \\g<devicenumber>') }} -N"
@@ -26,6 +27,8 @@
     
     - name: Expand root partition
       command: /usr/bin/rootfs-expand
+      register: rootfs_expand_status
+      failed_when: "'CHANGED' not in rootfs_expand_status.stdout"
       when: "'NOCHANGE' not in partition_needs_resizing.stdout"
     
     - name: Activate Memory cgroup
@@ -54,7 +57,12 @@
       user:
         name: "ansible"
         comment: "User for Ansible automation tasks"
-        group: ansible
+
+    - name: Enable sudo permissions for Ansible user
+      copy:
+        content: "ansible ALL=(ALL) NOPASSWD:ALL"
+        dest: /etc/sudoers.d/ansible
+        validate: /usr/sbin/visudo -cf %s
 
     - name: Add public key of current User to authorized_keys of ansible User 
       authorized_key:
