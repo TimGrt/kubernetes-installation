@@ -42,6 +42,11 @@
       yum:
         name: '*'
         state: latest
+    
+    - name: Set hostname
+      hostname:
+        name: "{{ inventory_hostname }}"
+      when: "ansible_hostname == 'localhost'"
 
     - name: Assert if host needs rebooting
       command: needs-restarting -r

@@ -2,4 +2,5 @@
 
 - import_tasks: prerequisites.yml
 - import_tasks: download-binary.yml
-- import_tasks: deploy-k3s-service.yml
+- import_tasks: firewall-rules.yml
+- import_tasks: motd.yml

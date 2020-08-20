@@ -14,12 +14,17 @@
     regexp: ' swap '
     state: 'absent'
 
-- name: Ensure bridged traffic can be seen by iptables
+- name: Add br_netfilter to /etc/modules-load.d/
   copy:
-    src: k8s.conf
-    dest: /etc/sysctl.d/k8s.conf
+    content: "br_netfilter"
+    dest: /etc/modules-load.d/br_netfilter.conf
 
-- name: Set bridge-nf-call-iptables (just to be sure)
+- name: Load br_netfilter kernel module
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Set bridge-nf-call-iptables
   sysctl:
     name: "{{ item }}"
     value: "1"
@@ -28,11 +33,6 @@
   loop:
     - net.bridge.bridge-nf-call-iptables
     - net.bridge.bridge-nf-call-ip6tables
-
-- name: Load br_netfilter kernel module
-  modprobe:
-    name: br_netfilter
-    state: present
 
 - name: Set SELinux in permissive mode
   selinux:
@@ -52,3 +52,4 @@
     value: "1"
     state: present
     reload: yes
+

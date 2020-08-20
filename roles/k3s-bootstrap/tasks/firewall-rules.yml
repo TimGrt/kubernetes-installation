@@ -1,0 +1,35 @@
+---
+
+- name: Ensure firewalld is started and enabled
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- firewalld:
+    zone: trusted
+    interface: lo
+    state: enabled
+    permanent: yes
+    immediate: yes
+
+- name: Open Kubernetes API port on k3s agent nodes
+  firewalld:
+    port: 6443/tcp
+    state: enabled
+    permanent: yes
+    immediate: yes
+
+- name: Open UDP port for Flannel VXLAN
+  firewalld:
+    port: 8472/udp
+    state: enabled
+    permanent: yes
+    immediate: yes
+
+- name: Open port required for kubelet
+  firewalld:
+    port: 10250/tcp
+    state: enabled
+    permanent: yes
+    immediate: yes

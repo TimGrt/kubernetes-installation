@@ -1,0 +1,13 @@
+---
+
+- name: Set motd message for k3s server host
+  copy:
+    content: "This host is used as k3s server. "
+    dest: /etc/motd
+  when: inventory_hostname in groups['kubemaster']
+
+- name: Set motd message for k3s server host
+  copy:
+    content: "This host is used as k3s agent."
+    dest: /etc/motd
+  when: inventory_hostname in groups['kubeworker']

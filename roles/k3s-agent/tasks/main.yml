@@ -1,8 +1,26 @@
 ---
 
+- name: Read node-token file from k3s server node
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+  delegate_to: "{{ groups['kubemaster'][0] }}"
+
+- name: Decode node-token
+  set_fact:
+    token_decoded: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
+
+- name: Copy service file for k3s server
+  template:
+    src: k3s.service.j2
+    dest: /etc/systemd/system/k3s.service
+    owner: root
+    group: root
+    mode: 0755
+
 - name: Enable and start K3s Node
   systemd:
-    name: k3s-node
+    name: k3s
     daemon_reload: yes
     state: restarted
     enabled: yes

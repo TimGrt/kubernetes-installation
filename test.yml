@@ -1,0 +1,14 @@
+---
+
+- hosts: rpi
+  tasks:
+    #    - debug:
+    #    msg: "{{ inventory_hostname }}"
+    #  when: 'ansible_hostname == "localhost"'
+    #- debug: var=ansible_hostname
+    - debug:
+        msg: "{{ hostvars[groups['kubemaster'][0]].ansible_host }}"
+    - debug: var=inventory_hostname
+    - debug:
+        msg: "{{ inventory_hostname }}"
+      when: inventory_hostname in groups['kubeworker']
