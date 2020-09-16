@@ -11,10 +11,16 @@
     src: kubeconfig.sh
     dest: /etc/profile.d/kubeconfig.sh
 
+- name: Ensure .kube directory exists
+  file:
+    path: ~/.kube
+    state: directory
+
 - name: Symlink the kubectl admin.conf to ~/.kube/conf
   file:
     src: /etc/kubernetes/admin.conf
     dest: ~/.kube/config
+    force: yes
     state: link
 
 - name: Install Python package manager
