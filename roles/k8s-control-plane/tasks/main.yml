@@ -23,10 +23,14 @@
     force: yes
     state: link
 
+- name: Install EPEL release
+  yum:
+    name: epel-release
+    state: present
+
 - name: Install Python package manager
   yum:
     name:
-      - epel-release
       - python-pip
       - python-openshift
     state: present
