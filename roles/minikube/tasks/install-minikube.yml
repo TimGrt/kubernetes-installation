@@ -1,0 +1,31 @@
+---
+
+- name: Get latest Minikube RPM package
+  get_url:
+    url: "https://storage.googleapis.com/minikube/releases/latest/minikube-latest.{{ ansible_architecture }}.rpm"
+    dest: "{{ minikube_download_directory }}/minikube-latest.{{ ansible_architecture }}.rpm"
+    mode: '0755'
+
+- name: Install Minikube RPM package
+  package:
+    name: "{{ minikube_download_directory }}/minikube-latest.{{ ansible_architecture }}.rpm"
+    state: present
+  become: yes
+
+- name: Get minikube status
+  command:
+    cmd: minikube status
+  register: status
+  changed_when: false
+  failed_when: false
+
+- name: Start minikube
+  command:
+    cmd: "minikube start"
+  async: 600
+  poll: 0
+  when: '"host: Stopped" in status.stdout_lines or "not found" in status.stdout'
+
+- name: Info for minikube start
+  debug:
+    msg: "The playbook will not wait for complete minikube start, this can take up to 10 minutes."

@@ -1,0 +1,57 @@
+---
+
+- name: Install required packages for Docker CE
+  yum:
+    name:
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+    state: present
+  become: yes
+
+- name: Get Docker CE Repository
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+  become: yes
+
+- name: Install Docker CE
+  yum:
+    name:
+      - containerd
+      - docker-ce
+      - docker-ce-cli
+  become: yes
+
+- name: Ensure Docker directory exists
+  file:
+    path: /etc/docker
+    state: directory
+  become: yes
+
+- name: Copy Docker daemon config
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+  become: yes
+
+- name: Ensure Docker Service directory exists
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+  become: yes
+
+- name: Start Docker daemon and enable on boot
+  systemd:
+    name: docker
+    state: started
+    daemon_reload: yes
+    enabled: yes
+  become: yes
+
+- name: Add user to Docker group
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  become: yes

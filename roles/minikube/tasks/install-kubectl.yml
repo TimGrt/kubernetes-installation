@@ -1,0 +1,18 @@
+---
+
+- name: Get stable Kubernetes release version
+  uri:
+    url: https://storage.googleapis.com/kubernetes-release/release/stable.txt
+    return_content: yes
+  register: kubernetes_stable_release_version
+
+- name: Set Architecture String for kubectl download
+  set_fact:
+    architecture: '{% if ansible_architecture == "aarch64" %}arm{% elif ansible_architecture == "x86_64" %}amd64{% endif %}'
+
+- name: Download and install kubectl binary
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/{{ kubernetes_stable_release_version.content }}/bin/linux/{{ architecture }}/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: '0755'
+  become: yes

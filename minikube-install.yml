@@ -1,0 +1,6 @@
+---
+
+- name: Minikube Installation
+  hosts: kubemaster
+  roles:
+    - minikube
