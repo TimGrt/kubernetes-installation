@@ -1,31 +1,32 @@
 ---
 
 - name: Ensure Memory cgroup is enabled
-  stat:
+  ansible.builtin.stat:
     path: /sys/fs/cgroup/memory
     
 - name: Disable swap
-  command: swapoff -a
+  ansible.builtin.command: 
+    cmd: swapoff -a
   when: ansible_swaptotal_mb > 0
 
 - name: Remove swap from fstab
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: '/etc/fstab'
     regexp: ' swap '
     state: 'absent'
 
 - name: Add br_netfilter to /etc/modules-load.d/
-  copy:
+  ansible.builtin.copy:
     content: "br_netfilter"
     dest: /etc/modules-load.d/br_netfilter.conf
 
 - name: Load br_netfilter kernel module
-  modprobe:
+  community.general.modprobe:
     name: br_netfilter
     state: present
 
 - name: Set bridge-nf-call-iptables
-  sysctl:
+  ansible.posix.sysctl:
     name: "{{ item }}"
     value: "1"
     state: present
@@ -35,19 +36,19 @@
     - net.bridge.bridge-nf-call-ip6tables
 
 - name: Set SELinux in permissive mode
-  selinux:
+  ansible.posix.selinux:
     policy: targeted
     state: permissive
 
 - name: Enable IPv4 forwarding
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: "1"
     state: present
     reload: yes
 
 - name: Enable IPv6 forwarding
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv6.conf.all.forwarding
     value: "1"
     state: present
