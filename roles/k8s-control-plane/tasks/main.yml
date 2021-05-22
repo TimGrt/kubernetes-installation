@@ -1,58 +1,58 @@
 ---
 
 - name: Run kubeadm to initialize Kubernetes cluster
-  command: 
+  ansible.builtin.command:
     cmd: "kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address={{ hostvars[inventory_hostname].ansible_host }}"
     creates: /var/lib/kubelet/config.yaml
 
 # Necessary to use kubectl command
 - name: Set Kubeconfig environment variable globally
-  copy:
+  ansible.builtin.copy:
     src: kubeconfig.sh
     dest: /etc/profile.d/kubeconfig.sh
 
 - name: Ensure .kube directory exists
-  file:
+  ansible.builtin.file:
     path: ~/.kube
     state: directory
 
 - name: Symlink the kubectl admin.conf to ~/.kube/conf
-  file:
+  ansible.builtin.file:
     src: /etc/kubernetes/admin.conf
     dest: ~/.kube/config
-    force: yes
+    force: true
     state: link
 
 - name: Install EPEL release
-  yum:
+  ansible.builtin.yum:
     name: epel-release
     state: present
 
 - name: Install Python package manager
-  yum:
+  ansible.builtin.yum:
     name:
       - python-pip
       - python-openshift
     state: present
 
 - name: Upgrade pip
-  pip:
+  community.general.pip:
     name: pip
     state: latest
 
 - name: Install needed python packages for k8s module
-  pip:
+  community.general.pip:
     name:
       - pyyaml
     state: present
 
 - name: Get Kubernetes version for Weave installation
-  shell: kubectl version | base64 | tr -d '\n'
+  ansible.builtin.shell: kubectl version | base64 | tr -d '\n'
   changed_when: false
   register: kubectl_version
 
 - name: Check if Weave is already installed
-  k8s_info:
+  community.kubernetes.k8s_info:
     api_version: v1
     kind: DaemonSet
     name: weave-net
@@ -60,24 +60,13 @@
   register: weave_daemonset
 
 - name: Configure Weave networking.
-  command:
+  ansible.builtin.command:
     cmd: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }}"
   register: weave_result
   changed_when: "'created' in weave_result.stdout"
   when: weave_daemonset.resources | length == 0
 
 - name: Apply pod network plugin
-  command:
+  ansible.builtin.command:
     cmd: "kubectl apply -f https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout_lines[0] }} --kubeconfig /etc/kubernetes/admin.conf"
   when: weave_daemonset.resources | length == 0
-
-- name: Get Dashboard config
-  get_url:
-    url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
-    dest: /root/dashboard-config.yaml
-
-- name: Apply Dashboard config to Kubernetes cluster
-  k8s:
-    src: /root/dashboard-config.yaml
-    kubeconfig: /etc/kubernetes/admin.conf
-    state: present

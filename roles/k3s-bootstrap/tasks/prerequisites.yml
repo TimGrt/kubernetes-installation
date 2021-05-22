@@ -3,9 +3,9 @@
 - name: Ensure Memory cgroup is enabled
   ansible.builtin.stat:
     path: /sys/fs/cgroup/memory
-    
+
 - name: Disable swap
-  ansible.builtin.command: 
+  ansible.builtin.command:
     cmd: swapoff -a
   when: ansible_swaptotal_mb > 0
 
@@ -30,7 +30,7 @@
     name: "{{ item }}"
     value: "1"
     state: present
-    reload: yes
+    reload: true
   loop:
     - net.bridge.bridge-nf-call-iptables
     - net.bridge.bridge-nf-call-ip6tables
@@ -45,12 +45,11 @@
     name: net.ipv4.ip_forward
     value: "1"
     state: present
-    reload: yes
+    reload: true
 
 - name: Enable IPv6 forwarding
   ansible.posix.sysctl:
     name: net.ipv6.conf.all.forwarding
     value: "1"
     state: present
-    reload: yes
-
+    reload: true

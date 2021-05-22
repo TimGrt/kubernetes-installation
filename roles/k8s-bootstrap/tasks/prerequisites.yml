@@ -1,34 +1,34 @@
 ---
 - name: Ensure Memory cgroup is enabled
-  stat:
+  ansible.builtin.stat:
     path: /sys/fs/cgroup/memory
-    
+
 - name: Disable swap
-  command: swapoff -a
+  ansible.builtin.command: swapoff -a
   when: ansible_swaptotal_mb > 0
 
 - name: Remove swap from fstab
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: '/etc/fstab'
     regexp: ' swap '
     state: 'absent'
 
 - name: Ensure bridged traffic can be seen by iptables
-  copy:
+  ansible.builtin.copy:
     src: k8s.conf
     dest: /etc/sysctl.d/k8s.conf
 
 - name: Load br_netfilter kernel module
-  modprobe:
+  community.general.modprobe:
     name: br_netfilter
     state: present
 
 - name: Open Ports for Control-Plane
-  firewalld:
+  ansible.posix.firewalld:
     port: "{{ item }}"
     zone: public
-    immediate: yes
-    permanent: yes
+    immediate: true
+    permanent: true
     state: enabled
   loop:
     - "6443/tcp"         # Kubernetes API Server
@@ -38,23 +38,22 @@
     - "10252/tcp"        # kube-controller-manager
 
 - name: Open Ports for Worker Nodes
-  firewalld:
+  ansible.posix.firewalld:
     port: "{{ item }}"
     zone: public
-    immediate: yes
-    permanent: yes
+    immediate: true
+    permanent: true
     state: enabled
   loop:
     - "30000-32767/tcp"
 
 - name: Set SELinux in permissive mode
-  selinux:
+  ansible.posix.selinux:
     policy: targeted
     state: permissive
 
 # Packages needed for subsequent operations, e.g. get certificate hash for worker join
 - name: Install additional packages
-  yum:
+  ansible.builtin.yum:
     name:
       - openssl
- 

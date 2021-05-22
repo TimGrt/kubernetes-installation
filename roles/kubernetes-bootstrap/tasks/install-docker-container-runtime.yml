@@ -1,7 +1,7 @@
 ---
 
 - name: Install required packages for Docker CE
-  yum:
+  ansible.builtin.yum:
     name:
       - yum-utils
       - device-mapper-persistent-data
@@ -9,36 +9,35 @@
     state: present
 
 - name: Get Docker CE Repository
-  get_url:
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/centos/docker-ce.repo
     dest: /etc/yum.repos.d/docker-ce.repo
 
 - name: Install Docker CE
-  yum:
+  ansible.builtin.yum:
     name:
       - containerd
       - docker-ce
       - docker-ce-cli
 
 - name: Ensure Docker directory exists
-  file:
+  ansible.builtin.file:
     path: /etc/docker
     state: directory
 
 - name: Copy Docker daemon config
-  copy:
+  ansible.builtin.copy:
     src: daemon.json
     dest: /etc/docker/daemon.json
 
 - name: Ensure Docker Service directory exists
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/system/docker.service.d
     state: directory
 
 - name: Start Docker daemon and enable on boot
-  systemd:
+  ansible.builtin.systemd:
     name: docker
     state: started
-    daemon_reload: yes
-    enabled: yes
-
+    daemon_reload: true
+    enabled: true

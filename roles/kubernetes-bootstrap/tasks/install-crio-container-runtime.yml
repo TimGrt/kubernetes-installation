@@ -1,24 +1,24 @@
 ---
 
 - name: Install Container Library Repository
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: devel_kubic_libcontainers_stable
     description: Stable Releases of Upstream github.com/containers packages for CentOS 7
     baseurl: https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/CentOS_7/devel:kubic:libcontainers:stable.repo
 
 - name: Install CRI-O Repository
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: devel_kubic_libcontainers_stable_cri-o_1.18
     description: Last release available in 1.18 branch for CentOS 7
     baseurl: https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:1.18/CentOS_7/devel:kubic:libcontainers:stable:cri-o:1.18.repo
 
 - name: Install CRI-O
-  yum:
+  ansible.builtin.yum:
     name: cri-o
     state: present
 
 - name: Start CRI-O
-  systemd:
+  ansible.builtin.systemd:
     name: cri-o
     state: started
     daemon_reload: yes

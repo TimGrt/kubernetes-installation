@@ -1,7 +1,7 @@
 ---
 
 - name: Set motd message for minikube server host
-  copy:
+  ansible.builtin.copy:
     content: "This host may run 'minikube'.\nStart with 'minikube start' and use 'kubectl' for management.\n"
     dest: /etc/motd
   become: yes

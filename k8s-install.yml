@@ -4,6 +4,7 @@
   hosts: rpi
   become: yes
   roles:
+    - kubernetes-bootstrap
     - k8s-bootstrap
 
 - name: Initialize Control-Plane Node

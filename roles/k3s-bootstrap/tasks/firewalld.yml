@@ -3,6 +3,5 @@
 - name: Ensure firewalld is stopped and disabled
   ansible.builtin.service:
     name: firewalld
-    state: started
-    enabled: yes
-    
+    state: stopped
+    enabled: false

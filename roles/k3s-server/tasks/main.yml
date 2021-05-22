@@ -1,7 +1,7 @@
 ---
 
 - name: Copy service file for k3s server
-  template:
+  ansible.builtin.template:
     src: k3s.service.j2
     dest: /etc/systemd/system/k3s.service
     owner: root
@@ -9,49 +9,49 @@
     mode: 0755
 
 - name: Enable and start K3s service
-  systemd:
+  ansible.builtin.systemd:
     name: k3s
-    daemon_reload: yes
+    daemon_reload: true
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Wait for node-token
-  wait_for:
+  ansible.builtin.wait_for:
     path: /var/lib/rancher/k3s/server/node-token
 
 - name: Create directory .kube
-  file:
+  ansible.builtin.file:
     path: ~{{ ansible_user }}/.kube
     state: directory
     owner: "{{ ansible_user }}"
 
 - name: Copy config file to user home directory
-  copy:
+  ansible.builtin.copy:
     src: /etc/rancher/k3s/k3s.yaml
     dest: ~{{ ansible_user }}/.kube/config
-    remote_src: yes
-    force: no
+    remote_src: true
+    force: false
     owner: "{{ ansible_user }}"
 
 - name: Replace localhost with IP of k3s server in kube config
-  replace:
-    path: ~{{ ansible_user}}/.kube/config
+  ansible.builtin.replace:
+    path: ~{{ ansible_user }}/.kube/config
     regexp: "^(?P<parameter>.*)(?P<address>127\\.0\\.0\\.1)(?P<port>.*)$"
     replace: "\\g<parameter>{{ hostvars[groups['kubemaster'][0]].ansible_host }}\\g<port>"
 
 - name: Set environment variable for kube config
-  lineinfile:
+  ansible.builtin.lineinfile:
     line: "export KUBECONFIG=.kube/config"
-    dest: ~{{ ansible_user}}/.bash_profile
+    dest: ~{{ ansible_user }}/.bash_profile
 
 - name: Create kubectl symlink
-  file:
+  ansible.builtin.file:
     src: /usr/local/bin/k3s
     dest: /usr/local/bin/kubectl
     state: link
 
 - name: Create crictl symlink
-  file:
+  ansible.builtin.file:
     src: /usr/local/bin/k3s
     dest: /usr/local/bin/crictl
     state: link

@@ -1,12 +1,12 @@
 ---
 
 - name: Install Kubernetes Repository
-  template:
+  ansible.builtin.template:
     src: kubernetes.repo.j2
     dest: /etc/yum.repos.d/kubernetes.repo
 
 - name: Install kubeadm, kubelet and kubectl
-  yum:
+  ansible.builtin.yum:
     name:
       - kubelet
       - kubeadm
@@ -15,6 +15,6 @@
     state: present
 
 - name: Start kubelet and enable at boot
-  systemd:
+  ansible.builtin.systemd:
     name: kubelet
-    enabled: yes
+    enabled: true

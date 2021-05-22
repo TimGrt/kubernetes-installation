@@ -3,4 +3,5 @@
 - name: Minikube Installation
   hosts: kubemaster
   roles:
+    - kubernetes-bootstrap
     - minikube

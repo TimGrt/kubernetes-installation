@@ -2,18 +2,18 @@
 
 # Command is executed on first node in kubemaster group, this host is currently the only master node
 - name: Create join token for kubeadm join command
-  command: "kubeadm token create --description 'A token created by Ansible to automatically join nodes'"
+  ansible.builtin.command: "kubeadm token create --description 'A token created by Ansible to automatically join nodes'"
   register: join_token
   delegate_to: "{{ groups['kubemaster'][0] }}"
 
 # Command is executed on first node in kubemaster group, this host is currently the only master node
 - name: Get discovery-token-ca-cert-hash for kubeadm join command
-  shell: "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'"
+  ansible.builtin.shell: "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'"
   register: discovery_token
   changed_when: false
   delegate_to: "{{ groups['kubemaster'][0] }}"
 
-- name: Run kubeadm join to add worker node to Kubernetes cluster 
-  command:  
+- name: Run kubeadm join to add worker node to Kubernetes cluster
+  ansible.builtin.command:
     cmd: "kubeadm join --token {{ join_token.stdout }} {{ hostvars[groups['kubemaster'][0]].ansible_host }}:6443 --discovery-token-ca-cert-hash sha256:{{ discovery_token.stdout }}"
     creates: /var/lib/kubelet/config.yaml
