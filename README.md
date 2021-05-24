@@ -9,7 +9,7 @@ The following Kubernetes distributions can be deployed:
 * minikube
 
 ## Requirements
-The Master node is running the Playbook. Minimum Ansible requirements:
+Minimum Ansible requirements:
 
 * ansible-base (2.10.0 or higher)
 
