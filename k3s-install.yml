@@ -3,8 +3,6 @@
 - name: Bootstrap cluster hosts for k3s installation
   hosts: rpi 
   become: yes
-  vars:
-    ip_address_netmask: "{{ ansible_default_ipv4.address }}/{{ ansible_default_ipv4.netmask }}"
   roles:
     - k3s-bootstrap
 
