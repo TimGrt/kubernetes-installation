@@ -21,4 +21,4 @@
   ansible.builtin.systemd:
     name: cri-o
     state: started
-    daemon_reload: yes
+    daemon_reload: true

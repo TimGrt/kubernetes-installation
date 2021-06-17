@@ -36,12 +36,12 @@
     state: present
 
 - name: Upgrade pip
-  community.general.pip:
+  ansible.builtin.pip:
     name: pip
     state: latest
 
 - name: Install needed python packages for k8s module
-  community.general.pip:
+  ansible.builtin.pip:
     name:
       - pyyaml
     state: present

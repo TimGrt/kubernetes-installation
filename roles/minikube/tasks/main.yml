@@ -1,6 +1,5 @@
 ---
 
-- import_tasks: install-docker-container-runtime.yml
 - import_tasks: install-minikube.yml
 - import_tasks: install-kubectl.yml
 - import_tasks: motd.yml
