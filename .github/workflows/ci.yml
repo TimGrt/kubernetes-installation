@@ -1,0 +1,36 @@
+---
+name: Ansible Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository.
+      uses: actions/checkout@v2
+
+    - name: Lint k8s-install Playbook.
+      uses: ansible/ansible-lint-action@master
+      with:
+        targets: k8s-install.yml
+        args: "-x line-length"
+    
+    - name: Lint k3s-install Playbook.
+      uses: ansible/ansible-lint-action@master
+      with:
+        targets: k3s-install.yml
+        args: "-x line-length"
+    
+    - name: Lint minikube-install Playbook.
+      uses: ansible/ansible-lint-action@master
+      with:
+        targets: minikube-install.yml
+        args: "-x line-length"
