@@ -21,16 +21,13 @@ jobs:
       uses: ansible/ansible-lint-action@master
       with:
         targets: k8s-install.yml
-        args: "-x line-length"
     
     - name: Lint k3s-install Playbook.
       uses: ansible/ansible-lint-action@master
       with:
         targets: k3s-install.yml
-        args: "-x line-length"
     
     - name: Lint minikube-install Playbook.
       uses: ansible/ansible-lint-action@master
       with:
         targets: minikube-install.yml
-        args: "-x line-length"

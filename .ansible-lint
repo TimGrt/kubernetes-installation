@@ -1,0 +1,7 @@
+skip_list:
+  - risky-file-permissions
+  - package-latest
+  - risky-shell-pipe
+  - no-changed-when
+  - line-length
+  - role-name

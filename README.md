@@ -1,7 +1,7 @@
 # Kubernetes Installation with kubeadm
 Ansible Playbooks to deploy different Kubernetes cluster distributions, originally intended to be installed on Raspberry Pi's.
 
-[![CodeFactor](https://www.codefactor.io/repository/github/timgrt/kubernetes-installation/badge)](https://www.codefactor.io/repository/github/timgrt/kubernetes-installation)
+[![Ansible Lint](https://github.com/TimGrt/kubernetes-installation/actions/workflows/ci.yml/badge.svg)](https://github.com/TimGrt/kubernetes-installation/actions/workflows/ci.yml) [![CodeFactor](https://www.codefactor.io/repository/github/timgrt/kubernetes-installation/badge)](https://www.codefactor.io/repository/github/timgrt/kubernetes-installation)
 
 The following Kubernetes distributions can be deployed:
 * K8s
