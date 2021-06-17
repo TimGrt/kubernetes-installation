@@ -18,16 +18,19 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Lint k8s-install Playbook.
-      uses: ansible/ansible-lint-action@master
+      uses: ansible/ansible-lint-action@main
       with:
         targets: k8s-install.yml
+        args: "-x 106,204"
     
     - name: Lint k3s-install Playbook.
       uses: ansible/ansible-lint-action@master
       with:
         targets: k3s-install.yml
+        args: "-x 106,204"
     
     - name: Lint minikube-install Playbook.
       uses: ansible/ansible-lint-action@master
       with:
         targets: minikube-install.yml
+        args: "-x 106,204"
