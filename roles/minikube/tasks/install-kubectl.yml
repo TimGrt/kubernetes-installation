@@ -3,7 +3,7 @@
 - name: Get stable Kubernetes release version
   ansible.builtin.uri:
     url: https://storage.googleapis.com/kubernetes-release/release/stable.txt
-    return_content: yes
+    return_content: true
   register: kubernetes_stable_release_version
 
 - name: Set Architecture String for kubectl download
@@ -15,4 +15,4 @@
     url: https://storage.googleapis.com/kubernetes-release/release/{{ kubernetes_stable_release_version.content }}/bin/linux/{{ architecture }}/kubectl
     dest: /usr/local/bin/kubectl
     mode: '0755'
-  become: yes
+  become: true

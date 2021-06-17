@@ -1,3 +1,3 @@
 ---
 
-minikube_download_directory: "{{ ansible_user_dir }}" 
+minikube_download_directory: "{{ ansible_user_dir }}"

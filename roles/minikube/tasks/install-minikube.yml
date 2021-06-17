@@ -10,7 +10,7 @@
   ansible.builtin.package:
     name: "{{ minikube_download_directory }}/minikube-latest.{{ ansible_architecture }}.rpm"
     state: present
-  become: yes
+  become: true
 
 - name: Get minikube status
   ansible.builtin.command:
