@@ -4,3 +4,4 @@
   hosts: mgmt
   roles:
     - kubectl
+

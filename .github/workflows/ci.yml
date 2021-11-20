@@ -22,6 +22,12 @@ jobs:
       with:
         targets: k8s-install.yml
         args: "-x 106,204"
+
+    - name: Lint kubectl Playbook.
+      uses: ansible/ansible-lint-action@master
+      with:
+        targets: kubectl.yml
+        args: "-x 106,204"
     
     - name: Lint k3s-install Playbook.
       uses: ansible/ansible-lint-action@master
