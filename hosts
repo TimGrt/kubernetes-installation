@@ -2,10 +2,11 @@
 ansible-master ansible_connection=local
 
 [kubemaster]
-rpi-cluster-host1 ansible_host=192.168.178.152
+rpi-cluster-host1 ansible_host=192.168.178.151
 
 [kubeworker]
-rpi-cluster-host2 ansible_host=192.168.178.153
+rpi-cluster-host2 ansible_host=192.168.178.152
+rpi-cluster-host3 ansible_host=192.168.178.153
 
 [rpi:children]
 kubemaster

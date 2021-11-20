@@ -1,0 +1,6 @@
+---
+
+- name: Install kubectl and get kube config file from Kubernetes cluster
+  hosts: mgmt
+  roles:
+    - kubectl

@@ -1,0 +1,30 @@
+---
+
+- name: Get latest release of kubectl
+  ansible.builtin.uri:
+    url: https://storage.googleapis.com/kubernetes-release/release/stable.txt
+    return_content: true
+  register: kubectl_latest_release_version
+
+
+- name: Download kubectl {{ kubectl_latest_release_version.content }} binary to {{ download_directory }}
+  ansible.builtin.get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_latest_release_version.content }}/bin/linux/amd64/kubectl
+    dest: "{{ download_directory }}"
+    mode: +x
+
+- name: Get kube config file content from Kubernetes master node
+  ansible.builtin.slurp:
+    src: ~/.kube/config
+  register: kubeconfig
+  delegate_to: "{{ groups['kubemaster'][0] }}"
+
+- name: Ensure .kube folder exists
+  file:
+    path: ~/.kube
+    state: directory
+
+- name: Write kube config file content to localhost
+  copy:
+    content: "{{ kubeconfig['content'] | b64decode }}"
+    dest: ~/.kube/config
