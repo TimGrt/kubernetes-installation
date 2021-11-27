@@ -28,13 +28,13 @@ jobs:
       with:
         targets: kubectl.yml
         args: "-x 106,204"
-    
+
     - name: Lint k3s-install Playbook.
       uses: ansible/ansible-lint-action@master
       with:
         targets: k3s-install.yml
         args: "-x 106,204"
-    
+
     - name: Lint minikube-install Playbook.
       uses: ansible/ansible-lint-action@master
       with:
